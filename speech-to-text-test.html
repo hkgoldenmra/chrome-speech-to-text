@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-hk">
+	<head>
+		<title>Mr.A Speech Recognition 0.0.1</title>
+		<meta charset="UTF-8"/>
+		<script>
+function padZero(string, length){
+	string += "";
+	while (string.length < length){
+		string = "0" + string;
+	}
+	return string;
+}
+
+function dateToISO8601(date){
+	var string = "";
+	string += padZero(date.getFullYear(), 4);
+	string += "-";
+	string += padZero(date.getMonth(), 2);
+	string += "-";
+	string += padZero(date.getDate(), 2);
+	string += " ";
+	string += padZero(date.getHours(), 2);
+	string += ":";
+	string += padZero(date.getMinutes(), 2);
+	string += ":";
+	string += padZero(date.getSeconds(), 2);
+	string += ".";
+	string += padZero(date.getMilliseconds(), 3);
+	return string;
+}
+
+function addRowMessage(section, message){
+	tr = section.insertRow(0);
+	tr.vAlign = "top";
+	td = tr.insertCell();
+	td.textContent = dateToISO8601(new Date());
+	td = tr.insertCell();
+	td.textContent = message;
+}
+
+function initialUI(){
+	var triggerButton = document.createElement("input");
+	triggerButton.setAttribute("id", "triggerButton");
+	triggerButton.setAttribute("type", "button");
+	triggerButton.setAttribute("value", "Start Speech Recognition");
+	triggerButton.setAttribute("onclick", "triggerSpeechRecognition(this);");
+	var messageTable = document.createElement("table");
+	messageTable.setAttribute("id", "messageTable");
+	messageTable.setAttribute("width", "100%");
+	messageTable.setAttribute("border", "1");
+	var tr, th, td;
+	var tHead = document.createElement("thead");
+	tr = tHead.insertRow();
+	th = document.createElement("th");
+	th.textContent = "Date Time";
+	th.width = "180"
+	tr.appendChild(th);
+	th = document.createElement("th");
+	th.textContent = "Recognized Message (Use triple click to select whole line of message)";
+	tr.appendChild(th);
+	messageTable.appendChild(tHead);
+	var tBody = document.createElement("tbody");
+	addRowMessage(tBody, "Welcome to use");
+	messageTable.appendChild(tBody);
+	var containerDiv = document.getElementById("container");
+	while (containerDiv.firstChild){
+		containerDiv.removeChild(containerDiv.firstChild);
+	}
+	containerDiv.appendChild(triggerButton);
+	containerDiv.appendChild(document.createElement("br"));
+	containerDiv.appendChild(messageTable);
+}
+
+function initialSpeechRecognition(){
+	speechRecognition = new SpeechRecognition();
+	speechRecognition.continuous = true;
+	speechRecognition.interimResults = true;
+	speechRecognition.lang = "yue-Hant-HK";
+	speechRecognition.onstart = function(){
+	};
+	speechRecognition.onerror = function(event){
+	};
+	speechRecognition.onresult = function(event){
+		var messageTable = document.getElementById("messageTable");
+		var tBody = messageTable.tBodies[0];
+		for (var i in event.results){
+			addRowMessage(tBody, event.results[i][0].transcript);
+		}
+	};
+	speechRecognition.onend = function(){
+	};
+}
+
+var SpeechRecognition = window.webkitSpeechRecognition;
+var speechRecognition = null;
+
+window.addEventListener("load", function(){
+	if (SpeechRecognition){
+		initialUI();
+		initialSpeechRecognition();
+	}
+});
+
+function triggerSpeechRecognition(button){
+	if (button.value == "Start Speech Recognition"){
+		button.value = "Stop Speech Recognition";
+		speechRecognition.start();
+	} else {
+		button.value = "Start Speech Recognition";
+		speechRecognition.stop();
+	}
+}
+		</script>
+	</head>
+	<body>
+		<div id="container"><h1>Requires Google Chrome or Chrome based browser to enable HTML5 Speech Recognition API</h1></div>
+	</body>
+</html>
