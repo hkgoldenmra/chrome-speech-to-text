@@ -25,6 +25,7 @@ function convertToPunctuation(string){
 		"關雙引號": "』",
 		"開書名號": "《",
 		"關書名號": "》"
+// 可以在此增加匹配詞語轉換
 	};
 	for (var i in punctuations){
 		string = string.split(i).join(punctuations[i]);
@@ -114,9 +115,6 @@ function clearContainer(message){
 		<label>連續執行<input id="autoResume" type="checkbox" checked="checked"/></label>
 		<input id="toggle" type="button" value="啟動語音辨認輸入" onclick="toggleSpeechRecognition();"/>
 		<input id="clear" type="button" value="清空文字內容" onclick="clearContainer('確定清空文字內容？');"/>
-		<hr/>
-		<input type="button" onclick="window.alert(document.getElementById('bufferContainer').value);"/>
-		<input type="button" onclick="window.alert(document.getElementById('resultContainer').value);"/>
 		<table width="100%">
 			<colgroup>
 				<col width="50%"/>
