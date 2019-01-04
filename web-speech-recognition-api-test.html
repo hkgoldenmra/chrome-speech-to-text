@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-hk">
 	<head>
-		<title>Speech Recognition 0.0.1</title>
+		<title>Speech Recognition 0.0.2</title>
 		<meta charset="UTF-8"/>
 		<script>
 //<!--
@@ -25,17 +25,17 @@ function convertToPunctuation(string){
 		"關雙引號": "』",
 		"開書名號": "《",
 		"關書名號": "》"
-// 可以在此增加匹配詞語轉換
+//		開此增加自動匹配詞語轉換
 	};
 	for (var i in punctuations){
 		string = string.split(i).join(punctuations[i]);
 	}
 	return string;
 }
-
+ 
 var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 var speechRecognition = null;
-
+ 
 window.addEventListener("load", function(){
 	if (SpeechRecognition){
 		speechRecognition = new SpeechRecognition();
@@ -53,7 +53,6 @@ window.addEventListener("load", function(){
 				if (result.isFinal){
 					this.stop();
 					resultContainer.value = bufferContainer.value;
-					break;
 				} else {
 					try{
 						var alternative = result.item(0);
@@ -65,19 +64,23 @@ window.addEventListener("load", function(){
 			}
 		});
 		speechRecognition.addEventListener("end", function(){
+			var bufferContainer = document.getElementById("bufferContainer");
+			var resultContainer = document.getElementById("resultContainer");
+			resultContainer.value = bufferContainer.value;
 			var toggle = document.getElementById("toggle");
 			var autoResume = document.getElementById("autoResume");
 			if (toggle.value == "停止語音辨認輸入" && autoResume.checked){
 				this.start();
 				console.log(new Date());
+			} else {
 			}
 		});
 	}
 });
-
+ 
 function toggleSpeechRecognition(){
 	if (speechRecognition == null){
-		window.alert("This browser does not support Web Speech API.");
+		window.alert("This browser does not support Web Speech Recognition API.");
 	} else {
 		var toggle = document.getElementById("toggle");
 		if (toggle.value == "停止語音辨認輸入"){
@@ -89,15 +92,15 @@ function toggleSpeechRecognition(){
 		}
 	}
 }
-
+ 
 function selectAllText(element){
 	element.select();
 }
-
+ 
 function clearAllText(element){
-	element.textContent = "";
+	element.value = "";
 }
-
+ 
 function clearContainer(message){
 	if (window.confirm(message)){
 		clearAllText(document.getElementById('bufferContainer'));
@@ -111,6 +114,7 @@ function clearContainer(message){
 		<select id="language">
 			<option value="yue-Hant-HK">香港粵語</option>
 			<option value="en-US">美式英語</option>
+<!-- 在此增加 言語名稱 及 言語編碼 -->
 		</select>
 		<label>連續執行<input id="autoResume" type="checkbox" checked="checked"/></label>
 		<input id="toggle" type="button" value="啟動語音辨認輸入" onclick="toggleSpeechRecognition();"/>
