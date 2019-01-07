@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-hk">
+	<head>
+		<title>Speech Synthesis 0.0.2</title>
+		<meta charset="UTF-8"/>
+		<style></style>
+		<script>
+function loadVoices(speechSynthesis, select){
+    if (voices.length == 0){
+        voices = speechSynthesis.getVoices();
+        voices.sort(function(voice1, voice2){
+            return voice1.name.localeCompare(voice2.name);
+        });
+        while (select.firstChild){
+            select.removeChild(select.firstChild);
+        }
+        for (var i in voices){
+            var option = document.createElement("option");
+            option.value = voices[i].lang;
+            option.textContent = voices[i].name + " (" + voices[i].lang + ")";
+            select.appendChild(option);
+        }
+    }
+}
+ 
+function start(){
+    stop();
+    var utterance = new window.SpeechSynthesisUtterance();
+    utterance.text = document.getElementById("text").value;
+    utterance.voice = voices[document.getElementById("voice").selectedIndex];
+    utterance.volume = document.getElementById("volume").value;
+    utterance.rate = document.getElementById("rate").value;
+    utterance.pitch = document.getElementById("pitch").value;
+    speechSynthesis.speak(utterance);
+}
+ 
+function stop(){
+    speechSynthesis.cancel();
+}
+
+function change(){
+    document.getElementById("showVolume").value = document.getElementById("volume").value;
+    document.getElementById("showRate").value = document.getElementById("rate").value;
+    document.getElementById("showPitch").value = document.getElementById("pitch").value;
+}
+ 
+window.addEventListener("load", function(){
+    var select = document.getElementById("voice");
+    loadVoices(speechSynthesis, select);
+    speechSynthesis.addEventListener("voiceschanged", function(){
+        loadVoices(speechSynthesis, select);
+    });
+});
+
+var voices = [];
+var speechSynthesis = window.speechSynthesis;
+		</script>
+	</head>
+	<body>
+<table border="1" width="95%">
+	<colgroup>
+		<col width="40"/>
+	</colgroup>
+	<tbody>
+		<tr valign="top"><td>言語</td><td><select id="voice">
+			<option></option>
+		</select></td></tr>
+		<tr valign="top"><td>文字</td><td><textarea id="text" rows="4" cols="40">hello, world. 你好，世界。</textarea></td></tr>
+		<tr><td>音量</td><td><input id="volume" type="range" min="0" max="1" step="0.01" value="0.2" style="width: 400px;" oninput="change();"/><input id="showVolume" type="text" value="0.2" style="width: 30px;" readonly="true"/></td></tr>
+		<tr><td>速度</td><td><input id="rate" type="range" min="0" max="1" step="0.01" value="1" style="width: 400px;" oninput="change();"/><input id="showRate" type="text" value="1" style="width: 30px;" readonly="true"/></td></tr>
+		<tr><td>頻率</td><td><input id="pitch" type="range" min="0" max="2" step="0.1" value="1" style="width: 400px;" oninput="change();"/><input id="showPitch" type="text" value="1" style="width: 30px;" readonly="true"/></td></tr>
+		<tr valign="top"><td colspan="2"><input type="button" value="Start" onclick="start();"/><input type="button" value="Stop" onclick="stop();"/></td></tr>
+	</tbody>
+</table>
+	</body>
+</html>

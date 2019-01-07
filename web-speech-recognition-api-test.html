@@ -34,7 +34,6 @@ function convertToPunctuation(string){
 }
  
 var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-var speechRecognition = null;
  
 window.addEventListener("load", function(){
 	if (SpeechRecognition){
@@ -79,9 +78,7 @@ window.addEventListener("load", function(){
 });
  
 function toggleSpeechRecognition(){
-	if (speechRecognition == null){
-		window.alert("This browser does not support Web Speech Recognition API.");
-	} else {
+	if (SpeechRecognition){
 		var toggle = document.getElementById("toggle");
 		if (toggle.value == "停止語音辨認輸入"){
 			toggle.value = "啟動語音辨認輸入";
@@ -90,6 +87,8 @@ function toggleSpeechRecognition(){
 			speechRecognition.lang = document.getElementById("language").value;
 			speechRecognition.start();
 		}
+	} else {
+		window.alert("This browser does not support Web Speech Recognition API.");
 	}
 }
  
@@ -114,6 +113,7 @@ function clearContainer(message){
 		<select id="language">
 			<option value="yue-Hant-HK">香港粵語</option>
 			<option value="en-US">美式英語</option>
+			<option value="ja-JP">日語</option>
 <!-- 在此增加 言語名稱 及 言語編碼 -->
 		</select>
 		<label>連續執行<input id="autoResume" type="checkbox" checked="checked"/></label>
